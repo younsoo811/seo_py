@@ -10,17 +10,6 @@ from tkinter.ttk import *
 import tkinter.messagebox
 import tkinter.font
 
-
-with open("test_2.png", "rb") as  image_file:
-    img_bin = image_file.read()
-    encoded_str=base64.b64encode(img_bin)
-
-    img_dic={
-        "test_img":encoded_str.decode()
-    }
-
-    img_json= json.dumps(img_dic)
-
 def pub():
     entry_time = time_entry.get()
     entry_size = size_entry.get()
@@ -34,7 +23,7 @@ def pub():
 
     # 연결 정상적으로 끊어짐 (rc=0)
     def on_disconnect(client, userdata, flags, rc=0):
-        print(str(rc))
+        print("disconnect: "+str(rc))
 
 
     # 새로운 클라이언트 생성
@@ -45,20 +34,28 @@ def pub():
 
     client.connect('localhost', 1883)
 
-    count=1
+    client.loop_start()
     for j in range(0,int(entry_time)):
-        for i in range(0,3*int(entry_size)):
-            # 비동기 루프 시작 (백그라운드에서 브로커와의 연결 상태 유지하고 콜백 함수 처리)
-            client.loop_start() 
-            #common 이라는 Topic에 json 형식(string타입)의 메시지 발행
-            #client.publish('common', json.dumps({"success": "ok"+str(count)}), 1) 
-            client.publish('common', img_json, 1)
-            client.loop_stop() # 비동기 루프 종료
-        print(count,"s")
-        time.sleep(1)
-        count=count+1
+        count=1
+        start_time=time.time()
+        for i in range(0,int(entry_size)):
+            #client.loop_start() 
+            json_dic={"success":str(count), "packet_num":str(entry_size)}
+            client.publish('common', json.dumps(json_dic), 1) 
+            #client.loop_stop() # 비동기 루프 종료
+            count=count+1
 
-    print(entry_size+"mb/s ("+entry_time+"s)")
+        #client.loop_start() 
+        json_dic={"success":"end", "packet_num":str(entry_size)}
+        client.publish('common', json.dumps(json_dic), 1) 
+        #client.loop_stop()
+
+        end_time=time.time()
+        pub_time= end_time-start_time
+        print(str(count)+"회 전송 ("+f"{pub_time: .5f} sec)")
+        if pub_time<1.0:
+            time.sleep(1.0-pub_time)
+    client.loop_stop()
     
     client.disconnect()
 

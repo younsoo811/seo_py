@@ -1,5 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
+import cv2
+import numpy as np
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -18,7 +20,7 @@ def on_subscribe(client, userdata, mid, granted_qos):
 # 새로운 메시지 도착했을때 호출됨 (메시지 본문 문자열로 디코딩하고, dic 타입으로 가져옴 )
 def on_message(client, userdata, msg):
     json_dic=json.loads(str(msg.payload.decode("utf-8")))
-    print(json_dic["success"])
+    #print(json_dic["success"])
     #print(json_dic["test_img"])
     #print(str(msg.payload.decode("utf-8")))
 
