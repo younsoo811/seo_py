@@ -11,15 +11,14 @@ import tkinter.messagebox
 import tkinter.font
 
 
-min=100.0
-max=0.0
-min_time=""
-max_time=""
+min, max=100.0, 0.0
+min_time, max_time="", ""
 b=True
 # 대기시간(출력기능 포함)
 def waittingTimer(waitTime: int, msg: str = None, showPrintUnit=10):
     global min,max
-    global min_time,max_time
+    global min_time,max_time, b
+
     def message(i, message, msg=msg):
         global min,max
         global min_time,max_time
@@ -37,16 +36,16 @@ def waittingTimer(waitTime: int, msg: str = None, showPrintUnit=10):
 
             print("CPU: ", cpu_percent*10)
             print("MEM: ", memory)
-            print("SEN: ", sent_bytes)        
+            print("SEN: ", sent_bytes) # 송신
             if min>cpu_percent*10 and cpu_percent!=0.0:
                 min=cpu_percent*10
                 print("MIN: ", min, "=========")
                 min_time=time.strftime('%Y-%m-%d %H:%M:%S')
-            elif max<cpu_percent*10:
+            if max<cpu_percent*10:
                 max=cpu_percent*10
                 print("MAX: ", max, "=========")
                 max_time=time.strftime('%Y-%m-%d %H:%M:%S')
-            print("REC: ", recv_bytes, "\n")
+            print("REC: ", recv_bytes, "\n") #수신
 
 
     print(f'{waitTime}초 이전에 종료하면 "ENTER"키를 누르십시오 . . .')
@@ -79,24 +78,32 @@ def waittingTimer(waitTime: int, msg: str = None, showPrintUnit=10):
         sub_window.geometry("350x200+200+200")
         sub_window.resizable(False, False)
 
-        tkinter.Button(sub_window, text="start", width=8, command=but).grid(row = 2, column = 2, padx = 10)
+        sub_main_label=tkinter.Label(sub_window, text = "checking...", height=2)
+        sub_main_label.grid(row = 0, column = 2, padx = 10, pady = 5)
+        tkinter.Button(sub_window, text="stop", width=8, command=lambda:[sub_window.destroy(), but()]).grid(row = 2, column = 2, padx = 10)
         sub_window.mainloop()
 
     def but():
         global b
         b=False
+        
 
     startTimer = False
     while flag[0]:
         if keyboard.is_pressed('enter'):
             print('Enter키를 눌러 프로그램을 종료합니다.')
+            t.cancel()
+            t2.cancel()
             break
 
         if b==False:
             print('Enter키를 눌러 프로그램을 종료합니다.')
+            t.cancel()
+            t2.cancel()
             break
 
         if not startTimer:
+            print("start_timer")
             t = Timer(0, timer, args=(flag,))
             t2 = Timer(1, win, args=())
             t.start()
@@ -106,14 +113,16 @@ def waittingTimer(waitTime: int, msg: str = None, showPrintUnit=10):
         # 과부하 방지를 위함
         time.sleep(.01)
 
-    t.cancel()
+    #t.cancel()
+    #t2.cancel()
     message(flag[1], '완료!')
-    min_cpu['text']= "MIN: "+str(min)
-    max_cpu['text']= " MAX: "+str(max)
-    min_label['text']="MIN: "+min_time
-    max_label['text']=" MAX: "+max_time
-    min=0.0
-    max=0.0
+    min_cpu['text']= "CPU-MIN: "+str(min)
+    max_cpu['text']= "CPU-MAX: "+str(max)
+    min_label['text']="TIME: "+min_time
+    max_label['text']="TIME: "+max_time
+    min, max =100.0, 0.0
+    min_time, max_time="",""
+    b=True
     return True
 
 
@@ -123,9 +132,9 @@ if __name__ == '__main__':
     main_window.geometry("350x200+200+200")
     main_window.resizable(False, False)
 
-    min_cpu=tkinter.Label(main_window, text = "MIN: 0.0",anchor=W, width=10 ,height=2)
+    min_cpu=tkinter.Label(main_window, text = "MIN: 0.0",anchor=W, width=15 ,height=2)
     min_cpu.grid(row = 0, column = 1, padx = 10, pady = 5)
-    max_cpu=tkinter.Label(main_window, text = "MAX: 0.0",anchor=W,width=10, height=2)
+    max_cpu=tkinter.Label(main_window, text = "MAX: 0.0",anchor=W,width=15, height=2)
     max_cpu.grid(row = 1, column = 1, padx = 10, pady = 5)
 
     min_label=tkinter.Label(main_window, text = "test", height=2)

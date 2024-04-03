@@ -22,7 +22,7 @@ def on_message(client, userdata, msg):
     global c_num
     global p_num
     json_dic=json.loads(str(msg.payload.decode("utf-8")))
-    #print(json_dic["success"])
+    print(json_dic["success"])
     #print("=", end="")
     if json_dic["success"]=="end":
         p_num=int(json_dic["packet_num"])
