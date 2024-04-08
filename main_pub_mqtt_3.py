@@ -42,8 +42,15 @@ def pub():
     entry_list[1]=entry_cam
     entry_list[2]=entry_pfid
     entry_list[3]=entry_add
-    entry_list[4]=entry_time
-    entry_list[5]=entry_size
+    entry_list[4]=entry_size
+    entry_list[5]=entry_time
+    entry_list[6]=str(check1.get())
+    entry_list[7]=str(check2.get())
+
+    # 엔트리 내용 백업
+    with open('_internal/data/entry_data.txt', 'w+') as f:
+        f.write('\n'.join(entry_list))
+
 
     main_label['text']="topic당 "+str(entry_size)+"개 전송 ("+str(entry_time)+"s)"
     #check_label['text']="success"
@@ -82,6 +89,11 @@ def pub():
     client.connect('localhost', 1883)
 
     time_save=str(time.strftime("%H: %M: %S", time.localtime(time.time())))
+
+    if check_connect==True:      
+        check_label['text']="success"
+        check_time_label['text']=time_save
+        check_connect=False     
 
     client.loop_start()
 
@@ -127,19 +139,19 @@ def pub():
     client.disconnect()
 
     # 로그 기록 변경
-    if check_connect==True:      
-        check_label['text']="success"
-        check_time_label['text']=time_save
-        check_connect=False
+    # if check_connect==True:      
+    #     check_label['text']="success"
+    #     check_time_label['text']=time_save
+    #     check_connect=False
 
     if check_disconnect==True:
         pub_label['text']="finish"
         pub_time_label['text']=str(time.strftime("%H: %M: %S", time.localtime(time.time())))
         check_disconnect=False
     
-    # 엔트리 내용 백업
-    with open('_internal/data/entry_data.txt', 'w+') as f:
-        f.write('\n'.join(entry_list))
+    # # 엔트리 내용 백업
+    # with open('_internal/data/entry_data.txt', 'w+') as f:
+    #     f.write('\n'.join(entry_list))
 
 
 
@@ -185,14 +197,21 @@ info_frame.pack(side="top", expand=True, padx=5, pady=5)
 
 set_frame=LabelFrame(main_window, text="setting")
 set_frame.pack(side="top", expand=True, padx=5, pady=5)
+
+# 전송할 json 파일 선택
 check1=IntVar()
 check2=IntVar()
-# 전송할 json 파일 선택
 tkinter.Label(set_frame, text="topic:", width=10).grid(row=6, column=0)
 detec_check=tkinter.Checkbutton(set_frame, text="detection", variable=check1)
 detec_check.grid(row=6, column= 1, padx=10, pady=10)
 event_check=tkinter.Checkbutton(set_frame, text="event", variable=check2, anchor=W)
 event_check.grid(row=6, column= 2, pady=10)
+
+if int(entry_list[6])==1:
+    detec_check.toggle()
+if int(entry_list[7])==1:
+    event_check.toggle()
+
 # 초당 전송 수
 tkinter.Label(set_frame, text="size:", width=10).grid(row=7, column=0)
 size_entry=tkinter.Entry(set_frame, width=20)
