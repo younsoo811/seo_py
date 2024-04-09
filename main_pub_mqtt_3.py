@@ -16,6 +16,8 @@ with open('_internal/data/entry_data.txt', 'r') as file:
 
 with open('framedata.json', 'r') as json_file:
     framedata_json=json.load(json_file)
+    print(framedata_json)
+    print(len(framedata_json["objects"])) # 몇개의 이미지가 포함되어 있는지 확인
 with open('event.json', 'r') as json_file:
     event_json=json.load(json_file)
 
@@ -88,12 +90,7 @@ def pub():
     client.username_pw_set("seo_ai", "qrqvud3")
     client.connect('localhost', 1883)
 
-    time_save=str(time.strftime("%H: %M: %S", time.localtime(time.time())))
-
-    if check_connect==True:      
-        check_label['text']="success"
-        check_time_label['text']=time_save
-        check_connect=False     
+    time_save=str(time.strftime("%H: %M: %S", time.localtime(time.time())))  
 
     client.loop_start()
 
@@ -139,10 +136,10 @@ def pub():
     client.disconnect()
 
     # 로그 기록 변경
-    # if check_connect==True:      
-    #     check_label['text']="success"
-    #     check_time_label['text']=time_save
-    #     check_connect=False
+    if check_connect==True:      
+        check_label['text']="success"
+        check_time_label['text']=time_save
+        check_connect=False
 
     if check_disconnect==True:
         pub_label['text']="finish"

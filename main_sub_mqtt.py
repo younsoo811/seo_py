@@ -21,17 +21,20 @@ def on_message(client, userdata, msg):
     json_dic=json.loads(str(msg.payload.decode("utf-8")))
     if "senders" in json_dic:
         print("==========FrameData============")
-        print("frame_num    :",json_dic["frame_num"])
-        print("senders      : "+json_dic["senders"][0]+", "+json_dic["senders"][1]+", "+json_dic["senders"][2])
-        print("ntp_ts       :",json_dic["ntp_ts"])
-        print("create_ntp_ts:",json_dic["creator_ntp_ts"])
-        print("objects      :",json_dic["objects"][0]["object_id"])
-    elif "event_id" in json_dic:
+        # print("frame_num    :",json_dic[0]["frame_num"])
+        # print("senders      : "+json_dic[0]["senders"][0]+", "+json_dic[0]["senders"][1])
+        # print("ntp_ts       :",json_dic[0]["ntp_ts"])
+        # print("create_ntp_ts:",json_dic[0]["creator_ntp_ts"])
+        # print("objects1     :",json_dic[0]["objects"][0]["object_id"])
+        print(json_dic)
+    if "event_id" in json_dic:
         print("============event==============")
-        print("token        :",json_dic["token"])
-        print("camera_id    :",json_dic["camera_id"])
-        print("profile_id   :",json_dic["profile_id"])
-        print("address      :",json_dic["address"]+"\n")
+        # print("token        :",json_dic["token"])
+        # print("camera_id    :",json_dic["camera_id"])
+        # print("profile_id   :",json_dic["profile_id"])
+        # print("address      :",json_dic["address"]+"\n")
+        print(json_dic)
+        print("\n")
 
 
 # 새로운 클라이언트 생성
