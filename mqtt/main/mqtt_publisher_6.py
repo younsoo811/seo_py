@@ -220,7 +220,7 @@ detec_check=tkinter.Checkbutton(set_frame, text="detection", variable=check1)
 detec_check.grid(row=6, column= 1, padx=10, pady=10)
 event_check=tkinter.Checkbutton(set_frame, text="event", variable=check2, anchor=W)
 event_check.grid(row=6, column= 2, pady=10)
-
+# 체크 버튼 저장값 기반 설정
 if int(entry_list[6])==1:
     detec_check.toggle()
 if int(entry_list[7])==1:
